@@ -1,4 +1,6 @@
-import logging, os
+"""Imported modules"""
+import logging
+import os
 from pprint import pprint
 
 from utils import analyze, filter_high_confidence_results, anonymize, get_response
@@ -11,8 +13,9 @@ else:
 logger = logging.getLogger()
 
 
-def lambda_handler(event, context):
-    logger.info(f"Processing event: {event.get('name', None)}")
+def lambda_handler(event, _context):
+    """Handles the lambda request"""
+    logger.info("Processing event: %event", event.get('name', None))
 
     try:
         entities = event.get('entities', ["PERSON", "PHONE_NUMBER", "CREDIT_CARD"])
@@ -30,5 +33,5 @@ def lambda_handler(event, context):
         pprint(response)
         return response
     except Exception as e:
-        logger.error(f"Error processing event: {e}")
+        logger.error("Error processing event: %event", e)
         return e

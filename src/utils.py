@@ -1,12 +1,15 @@
+"""Imported modules"""
 from presidio_analyzer import AnalyzerEngine
-from presidio_anonymizer import AnonymizerEngine
 from presidio_analyzer.nlp_engine import NlpEngineProvider
 
-_analyzer = None
-_anonymizer = None
+from presidio_anonymizer import AnonymizerEngine
+
+_ANALYZER = None
+_ANONYMIZER = None
 
 
 def get_response(original_text, anonymized_text):
+    """Returns a formatted response."""
     data = {
         "anonymized": False,
     }
@@ -22,12 +25,14 @@ def get_response(original_text, anonymized_text):
 
 
 def filter_high_confidence_results(results, threshold=0.7):
+    """Retains high confidence results to anonymize"""
     return [result for result in results if result.score >= threshold]
 
 
 def get_analyzer():
-    global _analyzer
-    if _analyzer is None:
+    """Returns the configured Presidio Analyzer Engine"""
+    global _ANALYZER
+    if _ANALYZER is None:
         supported_languages = ["en"]
         # "fr_core_news_sm", "en_core_web_sm"
         nlp_config = {
@@ -43,18 +48,21 @@ def get_analyzer():
 
 
 def get_anonymizer():
-    global _anonymizer
-    if _anonymizer is None:
-        _anonymizer = AnonymizerEngine()
-    return _anonymizer
+    """Returns the configured Presidio Anonymizer Engine"""
+    global _ANONYMIZER
+    if _ANONYMIZER is None:
+        _ANONYMIZER = AnonymizerEngine()
+    return _ANONYMIZER
 
 
 def analyze(text, entities, user_language):
+    """Generates score results based on the text parameter for desired entities and user language"""
     analyzer = get_analyzer()
     results = analyzer.analyze(text=text, entities=entities, language=user_language)
     return results
 
 
 def anonymize(text, analyzer_results):
+    """Following the analysis, anonymizes the data"""
     anonymizer = get_anonymizer()
     return anonymizer.anonymize(text=text, analyzer_results=analyzer_results)
